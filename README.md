@@ -1,1 +1,0 @@
-# UMC_8th_server_jini
