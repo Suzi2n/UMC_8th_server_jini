@@ -4,6 +4,7 @@ import express from "express";
 import { handleUserSignUp} from "./controllers/user.controller.js";
 import { handleAddStore} from "./controllers/stores.controller.js"
 import {handleAddReview} from "./controllers/reviwes.controller.js";
+import {handleAddMission, handleChallengeMission} from "./controllers/missions.controller.js";
 
 dotenv.config();
 
@@ -19,11 +20,20 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
+// 워크북 수행(UserSign API)
 app.post("/users", handleUserSignUp);
 
+// 특정 지역에 가게 추가하기 API
 app.post("/stores", handleAddStore);
 
+// 가게에 리뷰 추가하기 API
 app.post("/reviews", handleAddReview);
+
+// 가게에 미션 추가하기 API
+app.post("/stores/:storeId/missions", handleAddMission);
+
+// 미션 도전하기 API
+app.post("/missions/:missionId/challenges", handleChallengeMission);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);

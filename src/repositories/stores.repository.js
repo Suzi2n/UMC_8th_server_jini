@@ -16,3 +16,19 @@ export const addStore = async (data) => {
         conn.release();
     }
 };
+
+// 가게 ID로 가게 조회 (존재 여부 확인용)
+export const getStoreById = async (storeId) => {
+    const conn = await pool.getConnection();
+    try {
+        const [rows] = await conn.query(
+            `SELECT * FROM store WHERE id = ?;`,
+            [storeId]
+        );
+        return rows[0] || null;
+    } catch (err) {
+        throw new Error(`가게 조회 중 오류 발생: ${err.message}`);
+    } finally {
+        conn.release();
+    }
+};

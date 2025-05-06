@@ -1,8 +1,13 @@
-import { addStore as addStoreRepo } from "../repositories/stores.repository.js";
-
+import { addStore as addStoreRepo, getStoreById as getStoreByIdRepo } from "../repositories/stores.repository.js";
 
 // 가게 추가
 export const addStore = async (storeData) => {
     const storeId = await addStoreRepo(storeData);
-    return { storeId }; // storeId만 반환
+    return { storeId };
+};
+
+// 가게 조회 (존재 여부 확인용)
+export const getStoreById = async (storeId) => {
+    const store = await getStoreByIdRepo(storeId);
+    return store;
 };
