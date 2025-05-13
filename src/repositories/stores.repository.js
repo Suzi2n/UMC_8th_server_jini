@@ -1,34 +1,29 @@
-import { pool } from "../db.config.js";
+import { prisma } from "../db.config.js";
 
 // 가게 추가
 export const addStore = async (data) => {
-    const conn = await pool.getConnection();
-    try {
-        const [result] = await conn.query(
-            `INSERT INTO store (name, address, region_id) VALUES (?, ?, ?);`,
-            [data.name, data.address, data.regionId]
-        );
-
-        return result.insertId;
-    } catch (err) {
-        throw new Error(`가게 등록 중 오류 발생: ${err.message}`);
-    } finally {
-        conn.release();
-    }
+  try {
+    const store = await prisma.store.create({
+      data: {
+        name: data.name,
+        address: data.address,
+        regionId: data.regionId,
+      },
+    });
+    return store.id;
+  } catch (err) {
+    throw new Error(`가게 등록 중 오류 발생: ${err.message}`);
+  }
 };
 
-// 가게 ID로 가게 조회 (존재 여부 확인용)
+// 가게 ID로 가게 조회
 export const getStoreById = async (storeId) => {
-    const conn = await pool.getConnection();
-    try {
-        const [rows] = await conn.query(
-            `SELECT * FROM store WHERE id = ?;`,
-            [storeId]
-        );
-        return rows[0] || null;
-    } catch (err) {
-        throw new Error(`가게 조회 중 오류 발생: ${err.message}`);
-    } finally {
-        conn.release();
-    }
+  try {
+    const store = await prisma.store.findUnique({
+      where: { id: storeId },
+    });
+    return store || null;
+  } catch (err) {
+    throw new Error(`가게 조회 중 오류 발생: ${err.message}`);
+  }
 };

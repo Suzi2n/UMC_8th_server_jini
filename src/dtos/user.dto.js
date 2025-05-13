@@ -17,22 +17,13 @@ export const bodyToUser = (body) => {
 
 // DB 유저 + 취향을 응답 형태로 변환
 export const responseFromUser = ({ user, preferences }) => {
-    return {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        gender: user.gender,
-        birth: user.birth instanceof Date
-            ? user.birth.toISOString().split("T")[0]
-            : user.birth,
-        address: user.address,
-        detailAddress: user.detailAddress,
-        phoneNumber: user.phoneNumber,
-        preferences: preferences.map((pref) => ({
-            id: pref.id,
-            name: pref.name,
-        })),
-        createdAt: user.created_at,
-        updatedAt: user.updated_at,
-    };
+  const preferFoods = preferences.map(
+    (preference) => preference.foodCategory.name
+  );
+
+  return {
+    email: user.email,
+    name: user.name,
+    preferCategory: preferFoods,
+  };
 };
