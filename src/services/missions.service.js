@@ -3,10 +3,14 @@ import {
     challengeMissionForUser,
     checkMissionAlreadyChallenged,
     checkMissionExist,
+    getUserMissionWithDetails
 } from "../repositories/missions.repository.js";
 import { getStoreById } from "../repositories/stores.repository.js";
 import { StatusCodes } from "http-status-codes";
 import { getMissionsByStoreId } from "../repositories/missions.repository.js";
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 //  미션 추가
 export const addMission = async (storeId, missionData) => {
@@ -66,18 +70,18 @@ export const updateMissionStatus = async (userMissionId, status) => {
   }
   
   // 유효한 상태값인지 확인 (예: 진행중, 완료, 포기 등만 허용)
-  const validStatuses = ['진행중', '완료', '포기', '실패'];
+  const validStatuses = ['ONGOING', 'COMPLETED'];
   if (!validStatuses.includes(status)) {
     throw new Error(`'${status}'는 유효하지 않은 상태값입니다. ${validStatuses.join(', ')} 중 하나를 사용하세요.`);
   }
     
-  // 4. 상태 업데이트
+  // 상태 업데이트
   const updated = await prisma.user_mission.update({
     where: {
-      id: userMissionId,
+      id: Number(userMissionId),
     },
     data: {
-      status: normalizedStatus,
+      status, // ✅ 정상적으로 status 사용
       updated_at: new Date(),
     },
   });

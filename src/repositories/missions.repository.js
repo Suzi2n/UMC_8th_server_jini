@@ -66,3 +66,44 @@ export const getMissionsByStoreId = async (storeId) => {
     throw new Error(`미션 조회 실패: ${error.message}`);
   }
 };
+
+// 사용자 미션 상세 정보 조회
+export const getUserMissionWithDetails = async (userMissionId) => {
+  try {
+    const userMission = await prisma.user_mission.findUnique({
+      where: {
+        id: Number(userMissionId)
+      },
+      include: {
+        mission: {
+          select: {
+            reward: true,
+            deadline: true,
+            mission_spec: true,
+            store: {
+              select: {
+                name: true
+              }
+            }
+          }
+        }
+      }
+    });
+    
+    if (!userMission) {
+      return null;
+    }
+    
+    // 원래 쿼리와 동일한 결과 구조로 변환
+    return {
+      ...userMission,
+      reward: userMission.mission?.reward,
+      deadline: userMission.mission?.deadline,
+      mission_spec: userMission.mission?.mission_spec,
+      store_name: userMission.mission?.store?.name
+    };
+  } catch (err) {
+    console.error(`사용자 미션 상세 조회 오류: ${err.message}`);
+    throw new Error(`사용자 미션 조회 중 오류가 발생했습니다: ${err.message}`);
+  }
+};
